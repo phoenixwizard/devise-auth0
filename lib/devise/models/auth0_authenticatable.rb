@@ -22,6 +22,12 @@ module Devise
           elsif user = User.find_by(email: info['email'])
             name = user.name || info['name']
             user.update! auth0_user_id: uid, name: name
+          else
+            user = User.where(email: info['email']).first_or_create
+            user.password=Devise.friendly_token
+            user.save
+            name = user.name || info['name']
+            user.update! auth0_user_id: uid, name: name
           end
 
           user
